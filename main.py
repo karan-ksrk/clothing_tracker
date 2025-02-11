@@ -16,69 +16,143 @@ st.set_page_config(
 if 'theme' not in st.session_state:
     st.session_state.theme = 'light'
 
-# Theme toggle in top right
-with st.container():
-    col1, col2 = st.columns([6, 1])
-    with col2:
-        if st.toggle('Dark Mode', key='dark_mode'):
-            st.session_state.theme = 'dark'
-        else:
-            st.session_state.theme = 'light'
+# Logo SVGs
+LIGHT_LOGO = """
+<svg width="200" height="40" xmlns="http://www.w3.org/2000/svg">
+    <text x="10" y="30" font-family="Arial" font-size="24" fill="#2C3E50">
+        <tspan font-weight="bold">E-Commerce</tspan>
+        <tspan x="130" font-weight="normal">Analytics</tspan>
+    </text>
+</svg>
+"""
+
+DARK_LOGO = """
+<svg width="200" height="40" xmlns="http://www.w3.org/2000/svg">
+    <text x="10" y="30" font-family="Arial" font-size="24" fill="#FFFFFF">
+        <tspan font-weight="bold">E-Commerce</tspan>
+        <tspan x="130" font-weight="normal">Analytics</tspan>
+    </text>
+</svg>
+"""
+
+# Theme toggle and logo in header
+col1, col2, col3 = st.columns([1, 4, 1])
+with col1:
+    st.write("")  # Spacer
+with col2:
+    if st.session_state.theme == 'dark':
+        st.markdown(DARK_LOGO, unsafe_allow_html=True)
+    else:
+        st.markdown(LIGHT_LOGO, unsafe_allow_html=True)
+with col3:
+    if st.toggle('Dark Mode', key='dark_mode'):
+        st.session_state.theme = 'dark'
+    else:
+        st.session_state.theme = 'light'
 
 # Custom CSS with dynamic theming
 if st.session_state.theme == 'dark':
     st.markdown("""
         <style>
-        .css-1d391kg {
-            padding-top: 1rem;
+        /* Base styles */
+        .stApp {
+            background-color: #1a1c23;
+            color: #ffffff;
         }
+
+        /* Sidebar */
+        .css-1d391kg {
+            background-color: #2b313e;
+        }
+
+        /* Metrics */
         .stMetric {
             background-color: #2b313e;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 10px;
             color: #ffffff;
+            border: 1px solid #3d4451;
         }
+
+        /* Category banners */
         .category-banner {
             width: 100%;
             height: 200px;
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 20px;
+            border: 1px solid #3d4451;
         }
-        /* Dark theme specific styles */
-        .main {
-            background-color: #1a1c23;
-            color: #ffffff;
-        }
+
+        /* Text and inputs */
         .stMarkdown {
             color: #ffffff;
         }
         .stSelectbox, .stMultiSelect {
             background-color: #2b313e;
+            border: 1px solid #3d4451;
+        }
+
+        /* Charts */
+        .js-plotly-plot {
+            background-color: #2b313e !important;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #3d4451;
+        }
+
+        /* Buttons */
+        .stButton button {
+            background-color: #3d4451;
+            color: #ffffff;
+            border: 1px solid #4a5568;
+        }
+        .stButton button:hover {
+            background-color: #4a5568;
+            border: 1px solid #718096;
         }
         </style>
     """, unsafe_allow_html=True)
 else:
     st.markdown("""
         <style>
-        .css-1d391kg {
-            padding-top: 1rem;
+        /* Base styles */
+        .stApp {
+            background-color: #ffffff;
         }
+
+        /* Metrics */
         .stMetric {
-            background-color: #f0f2f6;
+            background-color: #f8fafc;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
         }
+
+        /* Category banners */
         .category-banner {
             width: 100%;
             height: 200px;
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
         }
-        /* Light theme specific styles */
-        .main {
-            background-color: #ffffff;
+
+        /* Charts */
+        .js-plotly-plot {
+            background-color: #f8fafc !important;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Buttons */
+        .stButton button {
+            border: 1px solid #e2e8f0;
+        }
+        .stButton button:hover {
+            background-color: #f1f5f9;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -142,9 +216,7 @@ filtered_df = df[
     (df['city'].isin(selected_cities))
 ]
 
-# Main content
-st.title("E-commerce Analytics Dashboard")
-
+# Main content area
 # Key metrics
 metrics = calculate_key_metrics(filtered_df)
 col1, col2, col3, col4 = st.columns(4)
