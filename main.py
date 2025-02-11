@@ -12,26 +12,76 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS
-st.markdown("""
-    <style>
-    .css-1d391kg {
-        padding-top: 1rem;
-    }
-    .stMetric {
-        background-color: #f0f2f6;
-        padding: 15px;
-        border-radius: 5px;
-    }
-    .category-banner {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# Initialize theme in session state
+if 'theme' not in st.session_state:
+    st.session_state.theme = 'light'
+
+# Theme toggle in top right
+with st.container():
+    col1, col2 = st.columns([6, 1])
+    with col2:
+        if st.toggle('Dark Mode', key='dark_mode'):
+            st.session_state.theme = 'dark'
+        else:
+            st.session_state.theme = 'light'
+
+# Custom CSS with dynamic theming
+if st.session_state.theme == 'dark':
+    st.markdown("""
+        <style>
+        .css-1d391kg {
+            padding-top: 1rem;
+        }
+        .stMetric {
+            background-color: #2b313e;
+            padding: 15px;
+            border-radius: 5px;
+            color: #ffffff;
+        }
+        .category-banner {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        /* Dark theme specific styles */
+        .main {
+            background-color: #1a1c23;
+            color: #ffffff;
+        }
+        .stMarkdown {
+            color: #ffffff;
+        }
+        .stSelectbox, .stMultiSelect {
+            background-color: #2b313e;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+        .css-1d391kg {
+            padding-top: 1rem;
+        }
+        .stMetric {
+            background-color: #f0f2f6;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .category-banner {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        /* Light theme specific styles */
+        .main {
+            background-color: #ffffff;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
 # Load data
 @st.cache_data
