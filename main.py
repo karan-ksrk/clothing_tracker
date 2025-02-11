@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from data_generator import generate_mock_data, get_category_banners
 from utils import (create_sales_by_category_chart, create_sales_trend_chart,
-                  create_top_products_chart, create_geographic_sales_chart,
-                  calculate_key_metrics)
+                   create_top_products_chart, create_geographic_sales_chart,
+                   calculate_key_metrics)
 
 # Page configuration
 st.set_page_config(
@@ -54,18 +54,24 @@ date_range = st.sidebar.date_input(
     max_value=end_date
 )
 
-# Category filter
+# Get unique categories and cities
+available_categories = sorted(df['category'].unique())
+available_cities = sorted(df['city'].unique())
+
+# Category filter with all options selected by default
 selected_categories = st.sidebar.multiselect(
     "Select Categories",
-    options=df['category'].unique(),
-    default=df['category'].unique()
+    options=available_categories,
+    default=available_categories,
+    help="Choose product categories to display"
 )
 
-# City filter
+# City filter with all options selected by default
 selected_cities = st.sidebar.multiselect(
     "Select Cities",
-    options=df['city'].unique(),
-    default=df['city'].unique()
+    options=available_cities,
+    default=available_cities,
+    help="Choose cities to display"
 )
 
 # Filter data
