@@ -45,11 +45,13 @@ category_banners = get_category_banners()
 st.sidebar.title("Filters")
 
 # Date filter
+start_date = df['date'].min().date()
+end_date = df['date'].max().date()
 date_range = st.sidebar.date_input(
     "Select Date Range",
-    value=(df['date'].min(), df['date'].max()),
-    min_value=df['date'].min(),
-    max_value=df['date'].max()
+    value=(start_date, end_date),
+    min_value=start_date,
+    max_value=end_date
 )
 
 # Category filter
@@ -67,12 +69,18 @@ selected_cities = st.sidebar.multiselect(
 )
 
 # Filter data
-filtered_df = df[
-    (df['date'].dt.date >= date_range[0]) &
-    (df['date'].dt.date <= date_range[1]) &
-    (df['category'].isin(selected_categories)) &
-    (df['city'].isin(selected_cities))
-]
+if len(date_range) == 2:  # Check if both dates are selected
+    filtered_df = df[
+        (df['date'].dt.date >= date_range[0]) &
+        (df['date'].dt.date <= date_range[1]) &
+        (df['category'].isin(selected_categories)) &
+        (df['city'].isin(selected_cities))
+    ]
+else:
+    filtered_df = df[
+        (df['category'].isin(selected_categories)) &
+        (df['city'].isin(selected_cities))
+    ]
 
 # Main content
 st.title("E-commerce Analytics Dashboard")
@@ -101,10 +109,10 @@ st.header("Category Performance")
 for category in selected_categories:
     cat_data = filtered_df[filtered_df['category'] == category]
     col1, col2 = st.columns([1, 3])
-    
+
     with col1:
-        st.image(category_banners[category], use_column_width=True)
-        
+        st.image(category_banners[category], use_container_width=True)
+
     with col2:
         st.subheader(category)
         metric1, metric2, metric3 = st.columns(3)
