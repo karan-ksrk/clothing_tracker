@@ -45,13 +45,23 @@ category_banners = get_category_banners()
 st.sidebar.title("Filters")
 
 # Date filter
-start_date = df['date'].min().date()
-end_date = df['date'].max().date()
-date_range = st.sidebar.date_input(
-    "Select Date Range",
-    value=(start_date, end_date),
-    min_value=start_date,
-    max_value=end_date
+min_date = df['date'].min().date()
+max_date = df['date'].max().date()
+
+start_date = st.sidebar.date_input(
+    "Start Date",
+    value=min_date,
+    min_value=min_date,
+    max_value=max_date,
+    help="Select the start date for filtering"
+)
+
+end_date = st.sidebar.date_input(
+    "End Date",
+    value=max_date,
+    min_value=start_date,  # End date can't be before start date
+    max_value=max_date,
+    help="Select the end date for filtering"
 )
 
 # Get unique categories and cities
@@ -75,18 +85,12 @@ selected_cities = st.sidebar.multiselect(
 )
 
 # Filter data
-if len(date_range) == 2:  # Check if both dates are selected
-    filtered_df = df[
-        (df['date'].dt.date >= date_range[0]) &
-        (df['date'].dt.date <= date_range[1]) &
-        (df['category'].isin(selected_categories)) &
-        (df['city'].isin(selected_cities))
-    ]
-else:
-    filtered_df = df[
-        (df['category'].isin(selected_categories)) &
-        (df['city'].isin(selected_cities))
-    ]
+filtered_df = df[
+    (df['date'].dt.date >= start_date) &
+    (df['date'].dt.date <= end_date) &
+    (df['category'].isin(selected_categories)) &
+    (df['city'].isin(selected_cities))
+]
 
 # Main content
 st.title("E-commerce Analytics Dashboard")
